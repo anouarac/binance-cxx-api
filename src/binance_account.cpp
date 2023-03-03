@@ -15,8 +15,8 @@
 using namespace binance;
 using namespace std;
 
-const string binance::Account::default_api_key_path = "$HOME/.bitrader/key";
-const string binance::Account::default_secret_key_path = "$HOME/.bitrader/secret";
+const string binance::Account::default_api_key_path = "$HOME/.binance/key";
+const string binance::Account::default_secret_key_path = "$HOME/.binance/secret";
 
 binance::Account::Account(const binance::Server& server_, const string api_key_, const string secret_key_) :
 
@@ -27,7 +27,10 @@ hostname(server_.getHostname()), server(server_), api_key(api_key_), secret_key(
 	{
 		wordexp_t p;
 		char** w;
-		wordexp(default_api_key_path.c_str(), &p, 0);
+        std::string api_key_path = default_api_key_path;
+        if (server.isSimulator())
+            api_key_path = "$HOME/.binance/test_key";
+		wordexp(api_key_path.c_str(), &p, 0);
 		w = p.we_wordv;
 		ifstream binanceapi(w[0]);
 		if (binanceapi.is_open())
@@ -42,7 +45,10 @@ hostname(server_.getHostname()), server(server_), api_key(api_key_), secret_key(
 	{
 		wordexp_t p;
 		char** w;
-		wordexp(default_secret_key_path.c_str(), &p, 0);
+        std::string secret_key_path = default_secret_key_path;
+        if (server.isSimulator())
+            secret_key_path = "$HOME/.binance/test_secret";
+		wordexp(secret_key_path.c_str(), &p, 0);
 		w = p.we_wordv;
 		ifstream binanceapi(w[0]);
 		if (binanceapi.is_open())
